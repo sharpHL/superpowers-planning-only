@@ -173,10 +173,24 @@ def patch_planning_copy(plugin_root: Path) -> None:
 
 
 def update_manifest(plugin_root: Path, upstream_version: str) -> None:
-    manifest_path = plugin_root / ".codex-plugin/plugin.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest["version"] = f"{upstream_version.split('+', 1)[0]}-planning.1"
-    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    planning_version = f"{upstream_version.split('+', 1)[0]}-planning.1"
+    for relative_path in (
+        ".codex-plugin/plugin.json",
+        ".claude-plugin/plugin.json",
+    ):
+        manifest_path = plugin_root / relative_path
+        if manifest_path.is_file():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["version"] = planning_version
+            manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+    marketplace_path = repo_root() / ".claude-plugin/marketplace.json"
+    if marketplace_path.is_file():
+        marketplace = json.loads(marketplace_path.read_text(encoding="utf-8"))
+        for entry in marketplace.get("plugins", []):
+            if isinstance(entry, dict) and entry.get("name") == "superpowers-planning-only":
+                entry["version"] = planning_version
+        marketplace_path.write_text(json.dumps(marketplace, indent=2) + "\n", encoding="utf-8")
 
 
 def assert_clean_subset(plugin_root: Path) -> None:

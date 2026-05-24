@@ -24,11 +24,39 @@ codex plugin add superpowers-planning-only@superpowers-planning-only
 
 Start a new Codex thread after installation so the new skills are loaded.
 
+If you installed the full Superpowers plugin and only want this subset, remove the full plugin:
+
+```bash
+codex plugin remove superpowers@openai-curated
+```
+
+## Install In Claude Code
+
+Add this repository as a marketplace:
+
+```bash
+claude plugin marketplace add sharpHL/superpowers-planning-only
+```
+
+Install the planning-only plugin globally:
+
+```bash
+claude plugin install -s user superpowers-planning-only@superpowers-planning-only
+```
+
+If you installed the full Superpowers plugin and only want this subset, disable the full plugin:
+
+```bash
+claude plugin disable -s user superpowers@claude-plugins-official
+```
+
 ## Local Layout
 
 ```text
 .agents/plugins/marketplace.json
+.claude-plugin/marketplace.json
 plugins/superpowers-planning-only/
+  .claude-plugin/plugin.json
   .codex-plugin/plugin.json
   assets/
   skills/

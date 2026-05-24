@@ -1,0 +1,20 @@
+{
+  "name": "superpowers-planning-only",
+  "description": "Planning-only marketplace for a slim Superpowers subset",
+  "owner": {
+    "name": "sharpHL",
+    "url": "https://github.com/sharpHL"
+  },
+  "plugins": [
+    {
+      "name": "superpowers-planning-only",
+      "description": "Brainstorming, specification, and implementation planning workflows derived from Superpowers",
+      "version": "5.1.0-planning.1",
+      "source": "./plugins/superpowers-planning-only",
+      "author": {
+        "name": "sharpHL",
+        "url": "https://github.com/sharpHL"
+      }
+    }
+  ]
+}
