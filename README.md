@@ -37,6 +37,20 @@ plugins/superpowers-planning-only/
     executing-plans/
 ```
 
+## Upgrade From Upstream
+
+The repo includes a repeatable sync script so this subset can be refreshed when upstream Superpowers changes:
+
+```bash
+python3 scripts/sync_from_upstream.py /path/to/superpowers
+python3 scripts/test_plugin.py
+git diff
+```
+
+If no source path is passed, the script uses the newest installed Codex Superpowers cache under `~/.codex/plugins/cache/openai-curated/superpowers/`.
+
+The sync script copies only `brainstorming`, `writing-plans`, and `executing-plans`, reapplies the planning-only edits, updates the plugin version to `<upstream-version>-planning.1`, and fails if references to omitted full-Superpowers skills remain.
+
 ## Attribution
 
 This project is based on Superpowers by Jesse Vincent and retains the MIT license.
