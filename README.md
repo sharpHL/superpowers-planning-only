@@ -47,7 +47,7 @@ python3 scripts/test_plugin.py
 git diff
 ```
 
-If no source path is passed, the script uses the newest installed Codex Superpowers cache under `~/.codex/plugins/cache/openai-curated/superpowers/`.
+If no source path is passed, the script first uses the newest installed Codex Superpowers cache under `~/.codex/plugins/cache/openai-curated/superpowers/`, then falls back to the openai-curated marketplace snapshot at `~/.codex/.tmp/plugins/plugins/superpowers`.
 
 The sync script copies only `brainstorming`, `writing-plans`, and `executing-plans`, reapplies the planning-only edits, updates the plugin version to `<upstream-version>-planning.1`, and fails if references to omitted full-Superpowers skills remain.
 

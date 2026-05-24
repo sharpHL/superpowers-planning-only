@@ -38,12 +38,17 @@ def repo_root() -> Path:
 def default_source() -> Path:
     cache_root = Path.home() / ".codex/plugins/cache/openai-curated/superpowers"
     candidates = [path for path in cache_root.glob("*") if (path / "skills").is_dir()]
-    if not candidates:
-        raise SystemExit(
-            "No upstream source provided and no Codex Superpowers cache found. "
-            "Pass a source path explicitly."
-        )
-    return max(candidates, key=lambda path: path.stat().st_mtime)
+    if candidates:
+        return max(candidates, key=lambda path: path.stat().st_mtime)
+
+    marketplace_snapshot = Path.home() / ".codex/.tmp/plugins/plugins/superpowers"
+    if (marketplace_snapshot / "skills").is_dir():
+        return marketplace_snapshot
+
+    raise SystemExit(
+        "No upstream source provided and no Codex Superpowers source found. "
+        "Run `codex plugin marketplace add openai/plugins` or pass a source path explicitly."
+    )
 
 
 def read_upstream_version(source: Path) -> str:
