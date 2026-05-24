@@ -6,6 +6,11 @@ A slim Codex plugin derived from Superpowers 5.1.0. It keeps only the planning w
 - `writing-plans`
 - `executing-plans`
 
+The plugin also includes two lightweight hooks:
+
+- `security-lite`: checks edits for likely secrets and common security footguns
+- `planning-stop-summary`: writes planning session summaries under `.superpowers-planning/summaries/`
+
 The full Superpowers plugin also includes TDD, debugging, code review, subagent orchestration, worktree management, and branch finishing workflows. Those are intentionally omitted here to reduce prompt surface area and keep the plugin focused on idea-to-plan work.
 
 ## Install In Codex
@@ -59,6 +64,9 @@ plugins/superpowers-planning-only/
   .claude-plugin/plugin.json
   .codex-plugin/plugin.json
   assets/
+  hooks/
+  hooks.json
+  scripts/
   skills/
     brainstorming/
     writing-plans/

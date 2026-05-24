@@ -1,6 +1,6 @@
 {
   "name": "superpowers-planning-only",
-  "version": "5.1.0-planning.1",
+  "version": "5.1.0-planning.2",
   "description": "A planning-only subset of Superpowers for brainstorming, specification, and implementation planning workflows.",
   "author": {
     "name": "sharpHL",
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Superpowers Planning Only",
     "shortDescription": "Brainstorm ideas, write specs, and produce executable implementation plans.",
-    "longDescription": "A slim Codex plugin derived from Superpowers 5.1.0 that keeps only the planning flow: brainstorming, writing implementation plans, and executing written plans inline. Debugging, TDD, code review, worktree, and completion workflow skills are intentionally omitted.",
+    "longDescription": "A slim Codex plugin derived from Superpowers 5.1.0 that keeps only the planning flow: brainstorming, writing implementation plans, and executing written plans inline. It also includes lightweight security and planning-summary hooks. Debugging, TDD, code review, worktree, and completion workflow skills are intentionally omitted.",
     "developerName": "sharpHL",
     "category": "Coding",
     "capabilities": [

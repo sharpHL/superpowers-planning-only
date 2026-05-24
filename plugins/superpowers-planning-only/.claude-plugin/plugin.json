@@ -1,7 +1,7 @@
 {
   "name": "superpowers-planning-only",
-  "description": "Planning-only subset of Superpowers for brainstorming, specification, and implementation planning workflows",
-  "version": "5.1.0-planning.1",
+  "description": "Planning-only subset of Superpowers for brainstorming, specification, implementation planning workflows, and lightweight hooks",
+  "version": "5.1.0-planning.2",
   "author": {
     "name": "sharpHL",
     "url": "https://github.com/sharpHL"

@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "superpowers-planning-only",
-      "description": "Brainstorming, specification, and implementation planning workflows derived from Superpowers",
-      "version": "5.1.0-planning.1",
+      "description": "Brainstorming, specification, implementation planning, and lightweight hooks derived from Superpowers",
+      "version": "5.1.0-planning.2",
       "source": "./plugins/superpowers-planning-only",
       "author": {
         "name": "sharpHL",

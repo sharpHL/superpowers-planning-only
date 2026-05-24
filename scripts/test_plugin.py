@@ -4,7 +4,10 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -44,6 +47,8 @@ def main() -> None:
     claude_manifest_path = plugin_root / ".claude-plugin/plugin.json"
     marketplace_path = repo / ".agents/plugins/marketplace.json"
     claude_marketplace_path = repo / ".claude-plugin/marketplace.json"
+    codex_hooks_path = plugin_root / "hooks.json"
+    claude_hooks_path = plugin_root / "hooks/hooks.json"
 
     if not manifest_path.is_file():
         fail("missing Codex plugin manifest")
@@ -53,6 +58,10 @@ def main() -> None:
         fail("missing Codex marketplace manifest")
     if not claude_marketplace_path.is_file():
         fail("missing Claude Code marketplace manifest")
+    if not codex_hooks_path.is_file():
+        fail("missing Codex hooks.json")
+    if not claude_hooks_path.is_file():
+        fail("missing Claude Code hooks/hooks.json")
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("name") != "superpowers-planning-only":
@@ -87,6 +96,15 @@ def main() -> None:
     if claude_entry.get("source") != "./plugins/superpowers-planning-only":
         fail("Claude Code marketplace plugin source mismatch")
 
+    codex_hooks = json.loads(codex_hooks_path.read_text(encoding="utf-8"))
+    claude_hooks = json.loads(claude_hooks_path.read_text(encoding="utf-8"))
+    for label, hooks in (("Codex", codex_hooks), ("Claude Code", claude_hooks)):
+        events = hooks.get("hooks", {})
+        if "PreToolUse" not in events:
+            fail(f"{label} hooks missing PreToolUse")
+        if "Stop" not in events:
+            fail(f"{label} hooks missing Stop")
+
     skills_root = plugin_root / "skills"
     actual_skills = {path.name for path in skills_root.iterdir() if path.is_dir()}
     if actual_skills != EXPECTED_SKILLS:
@@ -102,6 +120,61 @@ def main() -> None:
     for pattern in REQUIRED_PATTERNS:
         if pattern not in combined:
             fail(f"required planning-only reference missing: {pattern}")
+
+    security_hook = plugin_root / "scripts/security_lite.py"
+    secret_payload = {
+        "tool_name": "Write",
+        "tool_input": {
+            "file_path": "src/example.py",
+            "content": "OPENAI_API_KEY=sk-testtesttesttesttesttesttesttesttesttest",
+        },
+    }
+    secret_result = subprocess.run(
+        [sys.executable, str(security_hook)],
+        input=json.dumps(secret_payload),
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if secret_result.returncode == 0:
+        fail("security hook did not block a fake API key")
+
+    summary_hook = plugin_root / "scripts/planning_stop_summary.py"
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        transcript_path = tmp_path / "transcript.jsonl"
+        transcript_path.write_text(
+            "\n".join(
+                [
+                    json.dumps({"message": {"role": "user", "content": "Use brainstorming for this feature."}}),
+                    json.dumps({"message": {"role": "assistant", "content": [{"type": "text", "text": "Plan saved under docs/planning/plans/demo.md"}]}}),
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        payload = {
+            "cwd": str(tmp_path),
+            "session_id": "test-session",
+            "transcript_path": str(transcript_path),
+        }
+        env = os.environ.copy()
+        env["SUPERPOWERS_PLANNING_SUMMARY_ALWAYS"] = "1"
+        summary_result = subprocess.run(
+            [sys.executable, str(summary_hook)],
+            input=json.dumps(payload),
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+            check=False,
+        )
+        if summary_result.returncode != 0:
+            fail(f"summary hook failed: {summary_result.stderr}")
+        summaries = list((tmp_path / ".superpowers-planning/summaries").glob("*.md"))
+        if not summaries:
+            fail("summary hook did not write a summary")
 
     print("Planning-only plugin smoke tests passed.")
 

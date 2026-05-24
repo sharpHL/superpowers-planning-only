@@ -17,6 +17,7 @@ from pathlib import Path
 
 
 SKILLS = ("brainstorming", "writing-plans", "executing-plans")
+PLANNING_REVISION = 2
 FORBIDDEN_PATTERNS = (
     "superpowers:",
     "docs/superpowers",
@@ -173,7 +174,7 @@ def patch_planning_copy(plugin_root: Path) -> None:
 
 
 def update_manifest(plugin_root: Path, upstream_version: str) -> None:
-    planning_version = f"{upstream_version.split('+', 1)[0]}-planning.1"
+    planning_version = f"{upstream_version.split('+', 1)[0]}-planning.{PLANNING_REVISION}"
     for relative_path in (
         ".codex-plugin/plugin.json",
         ".claude-plugin/plugin.json",
